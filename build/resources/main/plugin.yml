@@ -1,0 +1,15 @@
+name: BlockyRewards
+version: '1.0.0'
+main: dev.jayoxdev.blockyrewards.BlockyRewards
+api-version: '1.20'
+authors: [ JayoxDev ]
+description: Give daily rewards to your users just for joining the server! Also give codes to redeem specials rewards
+commands:
+  blockyrewards:
+    description: 'Command'
+    aliases:
+      - 'br'
+  claim:
+    aliases:
+      - 'claimreward'
+      - 'brclaim'

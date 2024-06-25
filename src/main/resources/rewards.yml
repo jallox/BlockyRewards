@@ -1,0 +1,27 @@
+# Rewards claimed by /redeem <code> command
+# WIKI: ___
+command_rewards:
+  claimMeByCommand:
+    max_claims: 10
+    claim_timeout: "0;10;0"
+    give:
+      - "DIAMOND;5"
+      - "EMERALD;10"
+      - "IRON_SWORD;1"
+    execute: #  {%0}: Player name. {%1} Used Code. {%2} Reward name
+      - 'console:vault eco give {%0} 10'
+      - 'player:say I just claimed a reward!'
+  iHaveNoCommands:
+    max_claims: 10
+    claim_timeout: "1;0;20"
+    give:
+      - "DIAMOND;5"
+      - "EMERALD;10"
+      - "IRON_SWORD;1"
+    execute: [ ]
+  iHaveNoItems:
+    max_claims: 10
+    claim_timeout: "0;0;30"
+    give: [ ]
+    execute:
+      - "player:say I have no items! remember to add []!"

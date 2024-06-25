@@ -1,0 +1,73 @@
+# +---------------------------------------------------------------------------------+
+# |    ____  __           __         ____                              __           |
+# |   / __ )/ /___  _____/ /____  __/ __ \___ _      ______ __________/ /____       |
+# |  / __  / / __ \/ ___/ //_/ / / / /_/ / _ \ | /| / / __ `/ ___/ __  / ___/       |
+# | / /_/ / / /_/ / /__/ ,< / /_/ / _, _/  __/ |/ |/ / /_/ / /  / /_/ (__  )        |
+# |/_____/_/\____/\___/_/|_|\__, /_/ |_|\___/|__/|__/\__,_/_/   \__,_/____/         |
+# |  <  / _  __  _  __     /____/                                                   |
+# |  / / | |/_/ | |/_/                                                              |
+# | / / _>  <_ _>  <                                                                |
+# |/_(_)_/|_(_)_/|_|                                                                |
+# |                                                                                 |
+# |                                                                                 |
+# | By JayoxDev                                                                     |
+# | Support: https://discord.gg/tfvqwBbyRG                                          |
+# | Wiki:                                            |
+# | Download: https://modrinth.com/plugin/blockyrewards                             |
+# |                                                                                 |
+# |                                                                                 |
+# | Thanks for using BlockyRewards. If you like the plugin remember to              |
+# | follow on Modrinth!                                                             |
+# |                                                                                 |
+# | Any bug found? Report it on my Support Guild! (Jayox Support)                   |
+# |                                                                                 |
+# +---------------------------------------------------------------------------------+
+
+
+# Do not change this value or plugin will stop working!
+config: 1
+
+# What kind of parser do you want to use
+# Default: Legacy
+# Available parsers:
+#    - Legacy: Only recognises LegacyAmpersand (&)
+#    - Coming soon
+message-parser: Legacy
+
+# Should the plugin enable bStats metrics?
+# This is not required for plugin to work, but is recomended to enable
+# Default: true
+# Available options:
+#    - true
+#    - false
+enable-metrics: true
+
+# Database settings
+# If you want shared rewards, recommended MySQL
+database:
+  # If you want a limit of users to save in DB
+  # Warning: Do not touch instead of DB problems
+  lake-size: -1
+  # The type of DB used to save data
+  # Available types are: MySQL, SQLite
+  type: SQLite
+  # Only required if MySQL is selected
+  mysql:
+    # Username with permission to connect into DB
+    user: 'root'
+    # User's password if required
+    password: ''
+    # Database location, If localhost use localhost. If running on docker, use the IP given on the databases panel
+    endpoint: 'localhost:3306'
+    # The database name assigned to this plugin
+    # The database should be created already
+    database: 'rewards'
+
+
+# Edit handlers configurations
+handlers:
+  errors:
+    # When true, any "expected" error caused by plugin, will shut down the server
+    stop-server:
+      # When config is outdated / unknown version
+      bad-config: true

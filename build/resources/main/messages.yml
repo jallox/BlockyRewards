@@ -1,0 +1,20 @@
+prefix: "&aBlocky&lRewards &7» "
+
+errors:
+  no-permission-command: "&cYou don't have permissions to execute this command! &7You need the &c{%0} permissions"
+  no-permission-gui: "&cYou don't have access to {%0}, make sure you have {%1}"
+  no-admin: "&cYou are not administrator! This is only for admins"
+  no-reward-available: "&cYou don't have rewards to claim"
+  reward-already-claimed: "&cYou have claimed this reward before"
+  reward-not-available: "&cThis reward is not available"
+  code-needed: "&cYou need to specify a claim code."
+  invalid-code: "&cInvalid claim code."
+  reward-already-claimed-many-times: "&cYou have already claimed this reward the maximum number of times."
+  reward-timeout: "&cYou can't claim this reward. This reward will be available in {%0}."
+  no-permission: "&cYou do not have permission to use this command."
+  database-error: "&cThere was an error with the database. Please contact an administrator."
+
+command_rewards:
+  claimed: "&7You have successfully claimed a reward using the code &n{%0}"
+
+
