@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 
 @SuppressWarnings({"unused"})
@@ -39,7 +40,7 @@ public final class BlockyRewards extends JavaPlugin {
         getConfigUtil().saveAll();
         getMessageUtil().sendConsole(prefix + "&aStarting Blocky&lRewards");
         getMessageUtil().sendConsole(prefix + "&aUsing parser " + getMessageUtil().getParser());
-        getMessageUtil().sendConsole(prefix + "&aConfig version " + String.valueOf(getConfigUtil().getConfigVersion()));
+        getMessageUtil().sendConsole(prefix + "&aConfig version " + getConfigUtil().getConfigVersion());
         if (getConfigUtil().getConfigVersion().equals(getConfigUtil().getLastestConfigVersion())) {
             getMessageUtil().sendConsole(prefix + "&aYou have the latest config version!");
         } else {
@@ -56,18 +57,20 @@ public final class BlockyRewards extends JavaPlugin {
         getMessageUtil().sendConsole(prefix + "&aCreating tables");
         try {
             connectionStartup.createTables(
-                    "CREATE TABLE IF NOT EXISTS users (\n" +
-                            "    id INT AUTO_INCREMENT PRIMARY KEY, \n" +
-                            "    uuid VARCHAR(36) NOT NULL UNIQUE, \n" +
-                            "    last_login TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \n" +
-                            "    rewards_claimed INT NOT NULL DEFAULT 0\n" +
-                            ");",
-                    "CREATE TABLE IF NOT EXISTS user_rewards (\n" +
-                            "    id INT AUTO_INCREMENT PRIMARY KEY, \n" +
-                            "    user_id INT NOT NULL, \n" +
-                            "    reward_date DATE NOT NULL, \n" +
-                            "    FOREIGN KEY (user_id) REFERENCES users(id)\n" +
-                            ");",
+                    """
+                            CREATE TABLE IF NOT EXISTS users (
+                                id INT AUTO_INCREMENT PRIMARY KEY,\s
+                                uuid VARCHAR(36) NOT NULL UNIQUE,\s
+                                last_login TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\s
+                                rewards_claimed INT NOT NULL DEFAULT 0
+                            );""",
+                    """
+                            CREATE TABLE IF NOT EXISTS user_rewards (
+                                id INT AUTO_INCREMENT PRIMARY KEY,\s
+                                user_id INT NOT NULL,\s
+                                reward_date DATE NOT NULL,\s
+                                FOREIGN KEY (user_id) REFERENCES users(id)
+                            );""",
                     "CREATE TABLE IF NOT EXISTS commandClaims (" +
                             "id INT AUTO_INCREMENT PRIMARY KEY, " +
                             "uuid VARCHAR(36) NOT NULL, " +
@@ -82,10 +85,12 @@ public final class BlockyRewards extends JavaPlugin {
             getMessageUtil().sendConsole(prefix + "&cFailed to create tables: " + e.getMessage());
             e.printStackTrace();
         }
-        PluginCommand brcmd = getCommand("blockyrewards");
-        brcmd.setTabCompleter(new BRCommandTabCompleter());
-        brcmd.setExecutor(new BRCommand(this));
-        getCommand("redeem").setExecutor(new RedeemCommand(this));
+        PluginCommand BRCommand = getCommand("blockyrewards");
+        assert BRCommand != null;
+        BRCommand.setTabCompleter(new BRCommandTabCompleter());
+        BRCommand.setExecutor(new BRCommand(this));
+
+        Objects.requireNonNull(getCommand("redeem")).setExecutor(new RedeemCommand(this));
         getMessageUtil().sendConsole(prefix + "&a +---------------------------+");
         getMessageUtil().sendConsole(prefix + "&a |    BlockyRewards v" + getVersion() + "   |");
         getMessageUtil().sendConsole(prefix + "&a +---------------------------+");
