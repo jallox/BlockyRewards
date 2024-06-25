@@ -9,6 +9,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 
 public class BRCommand implements CommandExecutor {
     private BlockyRewards plugin;
@@ -51,42 +55,102 @@ public class BRCommand implements CommandExecutor {
 
                 }
                 case "reload" -> {
-                    long startTime = System.currentTimeMillis();
+                    if(commandSender.hasPermission("blockyrewards.admin.reload")) {
+                        long startTime = System.currentTimeMillis();
 
-                    String oldDB = plugin.getConfig().getString("database.type");
-                    int oldCVersion = plugin.getConfig().getInt("config");
-                    plugin.getConfigUtil().reloadConfig();
-                    plugin.getConfigUtil().reloadMessages();
-                    plugin.getConfigUtil().reloadRewards();
-                    if (!(oldDB.equalsIgnoreCase(plugin.getConfig().getString("database.type")))) {
-                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &eThe database type has changed. This change requires server restart to start working."));
-                    }
-                    if (!(oldCVersion == (plugin.getConfig().getInt("config")))) {
-                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&4&lDANGER: &cThe config version has changed. &7(" + oldCVersion + "  -> " + plugin.getConfig().getInt("config") + "). &cThis may cause errors."));
-                    }
-                    plugin.getConfigUtil().saveAll();
-                    long endTime = System.currentTimeMillis();
-                    commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&#00B9FF&lDone! &#00B9FFConfig reloaded in &b" + (endTime - startTime) + "ms"));
+                        String oldDB = plugin.getConfig().getString("database.type");
+                        int oldCVersion = plugin.getConfig().getInt("config");
+                        plugin.getConfigUtil().reloadConfig();
+                        plugin.getConfigUtil().reloadMessages();
+                        plugin.getConfigUtil().reloadRewards();
+                        if (!(oldDB.equalsIgnoreCase(plugin.getConfig().getString("database.type")))) {
+                            commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &eThe database type has changed. This change requires server restart to start working."));
+                        }
+                        if (!(oldCVersion == (plugin.getConfig().getInt("config")))) {
+                            commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&4&lDANGER: &cThe config version has changed. &7(" + oldCVersion + "  -> " + plugin.getConfig().getInt("config") + "). &cThis may cause errors."));
+                        }
+                        plugin.getConfigUtil().saveAll();
+                        long endTime = System.currentTimeMillis();
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&#00B9FF&lDone! &#00B9FFConfig reloaded in &b" + (endTime - startTime) + "ms"));
 
+                    }else{
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
+                    }
                 }
                 case "gui" -> {
-                    if(new SupportCheck().isGUISupported()) {
-                        new AdminGUI(plugin, commandSender);
+                    if(commandSender.hasPermission("blockyrewards.admin.gui")) {
+                        if(new SupportCheck().isGUISupported()) {
+                            new AdminGUI(plugin, commandSender);
+                        }else{
+                            commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&4&ERROR: &cGUI is not supported on this bukkit version. Check for plugin updates if you want support"));
+                        }
                     }else{
-                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&4&ERROR: &cGUI is not supported on this bukkit version. Check for plugin updates if you want support"));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
                     }
                 }
                 case "purge" -> {
-                    commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Command error. Dump code: 1a1b1c1d1"));
+                    if(args.length == 1) {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6This command deletes the entire DB. This process is irreversible and may affect to user's rewards"));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6To continue with this action, execute &n/br purge confirm"));
+
+                    }
+                    if (args[1].equalsIgnoreCase("confirm")) {
+                        if (commandSender.hasPermission("blockyrewards.admin.purge")) {
+                            try (Connection connection = plugin.getDatabase().getConnection()) {
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: Purging users..."));
+                                PreparedStatement purgeStatement1 = connection.prepareStatement("DELETE * FROM users");
+                                purgeStatement1.execute();
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: &aUsers purged!"));
+
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: Purging user_rewards..."));
+                                PreparedStatement purgeStatement2 = connection.prepareStatement("DELETE * FROM user_rewards");
+                                purgeStatement2.execute();
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: &aUser_rewards purged!"));
+
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: Purging commandClaims..."));
+                                PreparedStatement purgeStatement3 = connection.prepareStatement("DELETE * FROM commandClaims");
+                                purgeStatement3.execute();
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: &aCommandClaims purged!"));
+                                commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: &aDONE! All database has been purged!"));
+                                plugin.getMessageUtil().sendConsole(prefix + "&c&l&nWARNING: DATABASE HAS BEEN PURGED BY &4&l&n" + commandSender.getName());
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                            commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
+                        }
+                    } else {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6This command deletes the entire DB. This process is irreversible and may affect to user's rewards"));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6To continue with this action, execute &n/br purge confirm"));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &c" + args[1] + " is not a valid argument"));
+                    }
                 }
                 case "setup" -> {
-                    commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Setup unavailable"));
+                    if(commandSender.hasPermission("blockyrewards.admin.setup")) {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Setup unavailable"));
+                    }else{
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
+                    }
                 }
                 case "list" -> {
-                    commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6List unavailable"));
+                    if(commandSender.hasPermission("blockyrewards.admin.list")) {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6List unavailable"));
+                    }else{
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
+                    }
                 }
                 case "user" -> {
-                    commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Users unavailable"));
+                    if(commandSender.hasPermission("blockyrewards.admin.user")) {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Users unavailable"));
+                    }else{
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-admin")));
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + plugin.getConfigUtil().getMessages().getString("errors.no-permission-command")));
+                    }
                 }
                 default -> {
                     commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&#00B9FFRunning version &l" + plugin.getVersion()));
