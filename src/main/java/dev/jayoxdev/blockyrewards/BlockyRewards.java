@@ -6,6 +6,7 @@ import dev.jayoxdev.blockyrewards.Managers.ConnectionStartup;
 import dev.jayoxdev.blockyrewards.TabCompleters.BRCommandTabCompleter;
 import dev.jayoxdev.blockyrewards.Utils.Config;
 import dev.jayoxdev.blockyrewards.Utils.Message;
+import dev.jayoxdev.blockyrewards.Utils.SupportCheck;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -101,6 +102,10 @@ public final class BlockyRewards extends JavaPlugin {
         getMessageUtil().sendConsole(prefix + "&a ");
         getMessageUtil().sendConsole(prefix + "&a Thanks for using my plugin! <3");
         getMessageUtil().sendConsole(prefix + "&a ");
+        if(!(new SupportCheck().isGUISupported())) {
+            getMessageUtil().sendConsole(prefix + "&cThis bukkit version does not support GUI. For GUI support use compatible versions (1.20.x)");
+
+        }
     }
 
     @Override

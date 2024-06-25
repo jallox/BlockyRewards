@@ -2,6 +2,8 @@ package dev.jayoxdev.blockyrewards.Commands;
 
 import dev.jayoxdev.blockyrewards.BlockyRewards;
 import dev.jayoxdev.blockyrewards.GUIs.AdminGUI;
+import dev.jayoxdev.blockyrewards.Utils.SupportCheck;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,8 +38,9 @@ public class BRCommand implements CommandExecutor {
                 case "help" -> {
                     commandSender.sendMessage(plugin.getMessageUtil().parse("You are running version: &a" + plugin.getVersion()));
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br reload &7Reloads configuration"));
-                    commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br gui &7Opens the admin GUI"));
-                    commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br purge &#0089BD<string> &7Purges a reward"));
+                    if(new SupportCheck().isGUISupported()) {
+                        commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br gui &7Opens the admin GUI"));
+                    }
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br setup &7Sets up the plugin. &cRun only once"));
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br list &7Lists the current rewards"));
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br user &#0089BD<player> &#2C91B8<action> &7Executes an action on the selected player"));
@@ -67,7 +70,11 @@ public class BRCommand implements CommandExecutor {
 
                 }
                 case "gui" -> {
-                    new AdminGUI(plugin, commandSender);
+                    if(new SupportCheck().isGUISupported()) {
+                        new AdminGUI(plugin, commandSender);
+                    }else{
+                        commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&4&ERROR: &cGUI is not supported on this bukkit version. Check for plugin updates if you want support"));
+                    }
                 }
                 case "purge" -> {
                     commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6Command error. Dump code: 1a1b1c1d1"));
