@@ -43,7 +43,8 @@ public class BRCommand implements CommandExecutor {
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/br user &#0089BD<player> &#2C91B8<action> &7Executes an action on the selected player"));
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/rewards &#0089BD<action> &7Player rewards command"));
                     commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/reward &#0089BD<action> &7Player rewards command"));
-                    commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/claim &#0089BD<reward> &7Claims a reward"));
+                    commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/claim &7Command to claim a available reward"));
+                    commandSender.sendMessage(plugin.getMessageUtil().parse("&#00B9FF/redeem &#0089BD<reward> &7Claims a reward"));
 
                 }
                 case "reload" -> {
