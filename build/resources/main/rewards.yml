@@ -1,3 +1,5 @@
+# Rewards claimed by /redeem <code> command
+# WIKI: ___
 command_rewards:
   claimMeByCommand:
     max_claims: 10
@@ -16,10 +18,10 @@ command_rewards:
       - "DIAMOND;5"
       - "EMERALD;10"
       - "IRON_SWORD;1"
-    execute: []
+    execute: [ ]
   iHaveNoItems:
     max_claims: 10
     claim_timeout: "0;0;30"
-    give: []
+    give: [ ]
     execute:
       - "player:say I have no items! remember to add []!"

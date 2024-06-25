@@ -1,5 +1,5 @@
 name: BlockyRewards
-version: '1.0.0'
+version: '1.0-dev_release'
 main: dev.jayoxdev.blockyrewards.BlockyRewards
 api-version: '1.20'
 authors: [ JayoxDev ]
@@ -9,7 +9,7 @@ commands:
     description: 'Command'
     aliases:
       - 'br'
-  claim:
+  redeem:
     aliases:
-      - 'claimreward'
-      - 'brclaim'
+      - 'redeemreward'
+      - 'brredeem'
