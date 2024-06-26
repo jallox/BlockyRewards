@@ -95,8 +95,7 @@ public class BRCommand implements CommandExecutor {
                         commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6This command deletes the entire DB. This process is irreversible and may affect to user's rewards"));
                         commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&6&lWARNING: &6To continue with this action, execute &n/br purge confirm"));
 
-                    }
-                    if (args[1].equalsIgnoreCase("confirm")) {
+                    }else if (args[1].equalsIgnoreCase("confirm")) {
                         if (commandSender.hasPermission("blockyrewards.admin.purge")) {
                             try (Connection connection = plugin.getDatabase().getConnection()) {
                                 commandSender.sendMessage(plugin.getMessageUtil().parse(prefix + "&cDatabase Purge: Purging users..."));
