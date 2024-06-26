@@ -99,7 +99,7 @@ public final class BlockyRewards extends JavaPlugin {
             getMessageUtil().sendConsole(prefix + "&aTables created successfully!");
         } catch (SQLException e) {
             getMessageUtil().sendConsole(prefix + "&cFailed to create tables: " + e.getMessage());
-            e.printStackTrace();
+            getMessageUtil().sendConsole(e.toString());
         }
         PluginCommand BRCommand = getCommand("blockyrewards");
         assert BRCommand != null;
